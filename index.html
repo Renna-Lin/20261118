@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/dice.css">
+</head>
+
+<body>
+    <div class="game">
+        <header class="header">
+            <h2>🎲 擲骰子遊戲</h2>
+        </header>
+        <section class="dice-area">
+            <div id="dice1" class="dice">?</div>
+            <div id="dice2" class="dice">?</div>
+            <div id="dice3" class="dice">?</div>
+        </section>
+        <button class="roll-btn">
+            開始擲骰
+        </button>
+        <section class="result-area">
+            <h2>擲骰紀錄
+                <div class="count">
+                    次數：<span id="count">0</span> / 15</div>
+            </h2>
+            <div class="result-title">
+                <span>次數</span>
+                <span>骰子1</span>
+                <span>骰子2</span>
+                <span>骰子3</span>
+            </div>
+            <div id="resultlist" class="result-list">
+                <p class="empty">按下按鈕開始遊戲！！</p>
+            </div>
+        </section>
+
+        <footer class="legend">
+            <span class="color-box green"></span>
+            <span>數字重複</span>
+            <span class="color-box purple"></span>
+            <span>三顆數字相同</span>
+        </footer>
+    </div>
+    <script>
+        const dice1 = document.querySelector('#dice1');
+        const dice2 = document.querySelector('#dice2');
+        const dice3 = document.querySelector('#dice3');
+
+        const rollBtn = document.querySelector('.roll-btn');
+        const resultlist = document.querySelector('#resultlist');
+        const count = document.querySelector('#count');
+
+        let times = 0;
+        let maxTimes = 15;
+
+        function randomDice() {
+            return Math.floor(Math.random() * 6 + 1);
+        }
+
+        function checkSame(a, b, c) {
+            let class1 = 'number';
+            let class2 = 'number';
+            let class3 = 'number';
+
+            if (a === b && b === c) {
+                class1 = 'number triple';
+                class2 = 'number triple';
+                class3 = 'number triple';
+            } else {
+                if (a === b) {
+                    class1 = 'number same';
+                    class2 = 'number same';
+                }
+                if (a === c) {
+                    class1 = 'number same';
+                    class3 = 'number same'
+                }
+                if (b === c) {
+                    class2 = 'number same';
+                    class3 = 'number same';
+                }
+            }
+            return [class1, class2, class3];
+        }
+
+        function addResult(a, b, c) {
+            let colors = checkSame(a, b, c);
+            let row = document.createElement('div');
+            row.className = 'result-row';
+            row.innerHTML = ` 
+            <span>${times}</span>
+            <span class="${colors[0]}">${a}</span>
+            <span class="${colors[1]}">${b}</span>
+            <span class="${colors[2]}">${c}</span>
+            `;
+            resultlist.appendChild(row);
+        }
+
+        function resetGame() {
+            times = 0;
+            count.textContent = times;
+            dice1.textContent = '?';
+            dice2.textContent = '?';
+            dice3.textContent = '?';
+
+            resultlist.innerHTML =
+                '<p class="empty">按下按鈕開始遊戲！！</p>';
+
+            rollBtn.textContent = '開始擲骰';
+        }
+
+        rollBtn.addEventListener('click', function () {
+            if (times >= maxTimes) {
+                resetGame();
+                return;
+            }
+
+            let a = randomDice();
+            let b = randomDice();
+            let c = randomDice();
+
+            times = times + 1;
+            count.textContent = times;
+
+            dice1.textContent = a;
+            dice2.textContent = b;
+            dice3.textContent = c;
+
+            // 播放骰子動畫
+            dice1.classList.remove('rolling');
+            dice2.classList.remove('rolling');
+            dice3.classList.remove('rolling');
+
+            void dice1.offsetWidth;
+
+            dice1.classList.add('rolling');
+            dice2.classList.add('rolling');
+            dice3.classList.add('rolling');
+
+            if (times === 1) {
+                resultlist.innerHTML = '';
+            }
+            addResult(a, b, c);
+
+            if (times === maxTimes) {
+                rollBtn.textContent = '重新開始';
+            }
+        });
+
+
+
+    </script>
+</body>
+
+</html>
